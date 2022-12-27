@@ -2,6 +2,11 @@ package com.example.web3.controller;
 
 import com.example.web3.model.Recipe;
 import com.example.web3.service.RecipeService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,11 +28,23 @@ public class RecipeController {
     }
 
     @PostMapping
-    public Recipe addRecipe(@RequestBody Recipe recipe) {
-        return recipeService.add(recipe);
+    public ResponseEntity<?> addRecipe(@RequestBody Recipe recipe) {
+        if (StringUtils.isBlank(recipe.getTitle())) {
+            return ResponseEntity.badRequest().body("Название рецепта не может быть пустым");
+        }
+        return ResponseEntity.ok(recipeService.add(recipe));
     }
 
     @GetMapping("/{id}")
+    @ApiResponses({
+            @ApiResponse(responseCode="200", description = "Рецепт найден", content = {
+                    @Content(mediaType = "application/json")
+            }
+            ),
+            @ApiResponse(responseCode="404", description = "Рецепт не найден", content ={})
+    }
+
+    )
     public Recipe getRecipe(@PathVariable("id") long id) {
         return recipeService.get(id);
     }
