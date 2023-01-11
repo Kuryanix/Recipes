@@ -25,9 +25,9 @@ public class RecipeServiceImpl implements RecipeService{
 
     private Long counter = 0L;
 
-    private final Path path;
+    private Path path;
 
-    private final ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     public RecipeServiceImpl(@Value("${application.file.recipes}") String path) {
         try {

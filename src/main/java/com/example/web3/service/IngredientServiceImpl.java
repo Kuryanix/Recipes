@@ -21,9 +21,9 @@ public class IngredientServiceImpl implements IngredientService{
     private final Map<Long, Ingredient> ingredientMap = new HashMap<>();
     private long counter = 0;
 
-    private final Path path;
+    private Path path;
 
-    private final ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     public IngredientServiceImpl(@Value("${application.file.ingredients}")String path) {
         try {
