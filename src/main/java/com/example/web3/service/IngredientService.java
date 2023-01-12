@@ -1,6 +1,7 @@
 package com.example.web3.service;
 
 import com.example.web3.model.Ingredient;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface IngredientService {
 
@@ -11,4 +12,6 @@ public interface IngredientService {
     Ingredient update(long id, Ingredient ingredient);
 
     Ingredient remove(long id);
+
+    void importIngredients(MultipartFile ingredients);
 }

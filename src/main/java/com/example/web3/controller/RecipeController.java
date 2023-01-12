@@ -2,12 +2,16 @@ package com.example.web3.controller;
 
 import com.example.web3.model.Recipe;
 import com.example.web3.service.RecipeService;
+import io.github.classgraph.ResourceList;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,11 +41,11 @@ public class RecipeController {
 
     @GetMapping("/{id}")
     @ApiResponses({
-            @ApiResponse(responseCode="200", description = "Рецепт найден", content = {
+            @ApiResponse(responseCode = "200", description = "Рецепт найден", content = {
                     @Content(mediaType = "application/json")
             }
             ),
-            @ApiResponse(responseCode="404", description = "Рецепт не найден", content ={})
+            @ApiResponse(responseCode = "404", description = "Рецепт не найден", content = {})
     }
 
     )
@@ -57,5 +61,23 @@ public class RecipeController {
     @DeleteMapping("/{id}")
     public Recipe deleteRecipe(@PathVariable("id") long id) {
         return recipeService.remove(id);
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<byte[]> downloadRecipes() {
+        byte[] bytes = recipeService.getAllInBytes();
+        if (bytes == null) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .contentLength(bytes.length)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"")
+                .body(bytes);
+    }
+
+    @PostMapping(value = "import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void importRecipes(MultipartFile recipes) {
+        recipeService.importRecipes(recipes);
     }
 }
